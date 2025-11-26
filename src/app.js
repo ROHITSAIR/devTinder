@@ -1,21 +1,51 @@
-const express=require("express");
+const express=require('express');
 const app=express();
-const {adminAuth,userAuth}=require('./middleware/auth')
+const connectDB=require("./config/database");
+const User=require("./models/user");
+app.use(express.json());
 
-app.use("/admin",adminAuth);
-app.get("/admin/getData",(req,res)=>{
-  res.send("Admin data is added");
-})
-app.get("/admin/deleteData",(req,res)=>{
-  res.send("Admin data is deleted");
-})
-app.get("/admin/login",(req,res)=>{
-  res.send("Admin login");
-})
-app.use("/user",userAuth,(req,res)=>{
-  res.send("Data  is deleted");
+
+app.post("/signup",async(req,res)=>{
+//creating a instane of new user model
+  const userObj={
+    firstName:"Dhoni",
+    lastName:"MS",
+    emailId:"dhoni@900",
+    password:"12345",
+  }
+  const user=new User(userObj);
+
+await user.save();
+
+
+
+res.send("User signed up succesfully");
+/*  
+ const user=new User({
+    firstName:"Rohit",
+    lastName:"R",
+    emailId:"rohit@900",
+    password:"1234",
+  });
+
+
+*/
+
+
+
 
 })
+connectDB()
+.then(()=>{
+    console.log("Database connected successfully !!!!")
+
 app.listen(3000,()=>{
-  console.log("Server is running on port 3000");
+   console.log("Server is running on port 3000");
 })
+})
+
+  .catch((err)=>{
+    console.log("Database connection failed !!!!",err)
+})
+
+ 

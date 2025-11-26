@@ -1,33 +1,33 @@
-const adminAuth=(req,res,next)=>
-{
-    console.log("Admin is checking");
-    const token="xyz";
-    const isAdmin=token==="xyz";
-    if(!isAdmin)
-    {
-     res.status(401).send("Unauthorized access");
+// const adminAuth=(req,res,next)=>
+// {
+//     console.log("Admin is checking");
+//     const token="xyz";
+//     const isAdmin=token==="xyz";
+//     if(!isAdmin)
+//     {
+//      res.status(401).send("Unauthorized access");
 
-    }
-    else{
-                     next();
+//     }
+//     else{
+//                      next();
 
 
-    }
+//     }
 
-}
-const userAuth=(req,res,next)=>
-{
-    console.log("User is checking");
-    const token="xyz";
-    const isAdmin=token==="xyz";
-    if(!isAdmin)
-    {
-     res.status(401).send("Unauthorized access");
+// }
+// const userAuth=(req,res,next)=>
+// {
+//     console.log("User is checking");
+//     const token="xyz";
+//     const isAdmin=token==="xyz";
+//     if(!isAdmin)
+//     {
+//      res.status(401).send("Unauthorized access");
 
-    }
-    else{
+//     }
+//     else{
     
-    next();
-    }}
+//     next();
+//     }}
 
-module.exports={adminAuth,userAuth};
+// module.exports={adminAuth,userAuth};
