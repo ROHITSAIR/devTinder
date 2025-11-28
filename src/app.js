@@ -5,15 +5,52 @@ const User=require("./models/user");
 app.use(express.json());
 
 
+
+app.get("/user",async(req,res)=>{
+
+  const userEmail=req.body.emailId;
+  try{
+    const user=await User.find({emailId: userEmail});
+    if(user.length===0){
+      res.status(404).send("User not found");
+    }
+    else
+{
+    res.send(user);
+}
+  }
+  catch(err){
+    res.status(404).send("Something went wrong",err);
+  }
+
+})
+//delete a user
+app.delete("/user",async(req,res)=>{
+  const userId=req.body.userId;
+try{
+  const user= await User.findByIdAndDelete({_id:userId});
+res.send("User deleted succesully");
+}
+catch(err){
+  res.status(404).send("User not found");
+}
+})
+
+app.get("/feed",async (req,res)=>{
+ const Users= await User.find({});
+ res.send(Users);
+})
+
+
 app.post("/signup",async(req,res)=>{
-  // console.log(req.body);
+// console.log(req.body);
 //creating a instane of new user model
-  // const userObj={
-  //   firstName:"Dhoni",
-  //   lastName:"MS",
-  //   emailId:"dhoni@900",
-  //   password:"12345",
-  // }
+// const userObj={
+//   firstName:"Dhoni",
+//   lastName:"MS",
+//   emailId:"dhoni@900",
+//   password:"12345",
+// }
   const user=new User(req.body);
 try{
 await user.save();
@@ -40,6 +77,24 @@ res.status(404).send("Error in saving user",err);
 
 
 
+})
+
+
+//update data of the user
+
+app.put("/user", async(req,res)=>{
+  const userId=req.body.userId;
+  const data=req.body;
+  
+  try{
+await User.findByIdAndUpdate({_id:userId},data);
+res.send("user updated successfully");  
+console.log(data)
+}
+  catch(err)
+  {
+res.status(404).send("Error in updating");
+  }
 })
 connectDB()
 .then(()=>{
