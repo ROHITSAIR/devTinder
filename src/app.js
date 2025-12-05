@@ -51,14 +51,15 @@ app.post("/signup",async(req,res)=>{
 //   emailId:"dhoni@900",
 //   password:"12345",
 // }
-  const user=new User(req.body);
+ const user=new User(req.body);
+
 try{
 await user.save();
 res.send("User signed up succesfully");
 }
 catch(err)
 {
-res.status(404).send("Error in saving user",err);
+res.status(404).send("Error in saving user"+err.message);
 }
 
 
@@ -82,12 +83,15 @@ res.status(404).send("Error in saving user",err);
 
 //update data of the user
 
-app.put("/user", async(req,res)=>{
+app.patch("/user", async(req,res)=>{
   const userId=req.body.userId;
   const data=req.body;
   
   try{
-await User.findByIdAndUpdate({_id:userId},data);
+await User.findByIdAndUpdate({_id:userId},data,{
+  returnDocument:"after",
+  runValidators:true
+});
 res.send("user updated successfully");  
 console.log(data)
 }
