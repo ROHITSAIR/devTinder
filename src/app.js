@@ -83,11 +83,26 @@ res.status(404).send("Error in saving user"+err.message);
 
 //update data of the user
 
-app.patch("/user", async(req,res)=>{
-  const userId=req.body.userId;
+app.patch("/user/:userId", async(req,res)=>{
+  //const userId=req.body.userId;
+  const userId=req.params?.userId;
   const data=req.body;
-  
-  try{
+ 
+ //93 to 101 line is for allowing only specific fields to be updated 
+try{
+   const ALLOWED_UPDATES=["photoUrl","about","gender","skills"];
+
+  const isUpdateAllowed=Object.keys(data).every((k)=>
+  ALLOWED_UPDATES.includes(k)
+  );
+  if(!isUpdateAllowed)
+  {
+    res.status(400).send("Update not allowed")
+  }
+  if(data?.skills.length>10)
+  {
+   res.status(401).send("Skills cannot be more than 10");
+  }
 await User.findByIdAndUpdate({_id:userId},data,{
   returnDocument:"after",
   runValidators:true
@@ -97,7 +112,7 @@ console.log(data)
 }
   catch(err)
   {
-res.status(404).send("Error in updating");
+res.status(404).send("Error in updating",err.message);
   }
 })
 connectDB()
