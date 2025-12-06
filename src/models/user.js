@@ -1,5 +1,5 @@
 const mongoose=require("mongoose");
-
+const validator=require('validator');
 const userSchema=new mongoose.Schema({
     firstName:{
         type:String,
@@ -9,7 +9,6 @@ const userSchema=new mongoose.Schema({
     },
     lastName:{
         type:String,
-        unique:true,
         minLength:5,
         maxLength:45
     },
@@ -18,7 +17,15 @@ const userSchema=new mongoose.Schema({
         lowercase:true,
         required:true,
         unique:true,
-        trim:true
+        trim:true,
+        validate(value)
+        {
+            if(!validator.isEmail(value))
+                {
+                    throw new Error("Email is not valid");
+                }
+        }
+        
        
     },
     password:{
@@ -38,7 +45,14 @@ const userSchema=new mongoose.Schema({
     },
     photoUrl:{
         type:String,
-        default:"https://namastedev.com/?_aff=946684882216"
+        default:"https://namastedev.com/?_aff=946684882216",
+        validate(value)
+        {
+            if(!validator.isURL(value))
+                {
+                    throw new Error("URL is not valid");
+                }
+        }
     },
     about:{
         type:String,
