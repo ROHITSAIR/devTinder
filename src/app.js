@@ -2,6 +2,8 @@ const express=require('express');
 const app=express();
 const connectDB=require("./config/database");
 const User=require("./models/user");
+const {validateSignUpData}=require("./utils/validation");
+const bcrypt=require("bcrypt");
 app.use(express.json());
 
 
@@ -41,7 +43,7 @@ app.get("/feed",async (req,res)=>{
  res.send(Users);
 })
 
-
+//signup
 app.post("/signup",async(req,res)=>{
 // console.log(req.body);
 //creating a instane of new user model
@@ -50,16 +52,37 @@ app.post("/signup",async(req,res)=>{
 //   lastName:"MS",
 //   emailId:"dhoni@900",
 //   password:"12345",
-// }
- const user=new User(req.body);
-
+// 
 try{
+//validation
+
+validateSignUpData(req);
+
+//encryption
+const{firstName,lastName,emailId,password}=req.body;
+
+//encrypt the password
+const passwordHash= await bcrypt.hash(password,10)
+console.log(passwordHash);
+
+
+//creating a new instance for the user model
+ 
+//const user=new User(req.body);
+
+//another way like in 70
+const user=new User({
+  firstName,
+  lastName,
+  emailId,
+  password:passwordHash
+})
 await user.save();
 res.send("User signed up succesfully");
 }
 catch(err)
 {
-res.status(404).send("Error in saving user"+err.message);
+res.status(404).send("Erro:"+err.message);
 }
 
 
@@ -80,9 +103,35 @@ res.status(404).send("Error in saving user"+err.message);
 
 })
 
+//login
+app.post("/login",async (req,res)=>
+  {
+    try{
+    const {emailId,password}=req.body;
+    const user=await User.findOne({emailId:emailId});
+    if(!user)
+    {
+      throw new Error("EmailID is not present in Db")
+    }
+    const isPasswordValid=await bcrypt.compare(password,user.password)
+    if(isPasswordValid)
+      {
+        res.send("Login successfull")
+      }
+      else
+        {
+          throw new Error("Password is not correct")
+        }
+
+  }
+  catch(err)
+  {
+    res.status(400).send("Error:"+err.message)
+  }
+
+  })
 
 //update data of the user
-
 app.patch("/user/:userId", async(req,res)=>{
   //const userId=req.body.userId;
   const userId=req.params?.userId;
