@@ -7,16 +7,13 @@ if(!firstName||!lastName)
     }
 else if(lastName.length<3||lastName.length>50)
     {
-        throw new Error("lastNAme should be define in limit")
+        throw new Error("lastName should be define in limit")
     }
 else if(!validator.isEmail(emailId))
     {
         throw new Error("not valid  mail")
     } 
-// else if(!validator.isStrongPassword(password))
-//     {
-//         throw new Error("Is strong password")
-//     }       
+      
 
 }
 
